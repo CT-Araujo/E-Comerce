@@ -2,7 +2,7 @@ from rest_framework import status
 from rest_framework.response import Response
 from rest_framework_simplejwt.views import TokenObtainPairView
 from django.test import RequestFactory
-
+import requests
 def Validation_password(password):
     senha = password
     tam = len(senha)
@@ -16,10 +16,22 @@ def Validation_password(password):
         if n.isalnum() == False:
             return Response({"message":"Caracteres especiais não são permitidos"}, status = status.HTTP_400_BAD_REQUEST)
     
-    
     return Response(senha, status = status.HTTP_200_OK)
 
-
+def Validation_cep(cep):
+    if len(str(cep)) != 8:
+        return Response({"message":"CEP invalido, por favor informe 8 digitos númericos"}, status = status.HTTP_400_BAD_REQUEST)
+    else:
+        url = (f'https://viacep.com.br/ws/{cep}/json/')
+        
+        response = requests.get(url)
+        
+        if response.status_code == 200:
+            return Response(status = status.HTTP_200_OK)
+        else:
+            return Response({"message":"CEP invalido"}, status = status.HTTP_400_BAD_REQUEST)    
+    
+    
 def obter_token_jwt(email, password):
     factory = RequestFactory()
     request = factory.post('/token/', {'email': email, 'password': password})

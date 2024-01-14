@@ -32,10 +32,19 @@ class Users(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(max_length = 120, unique = True, blank = False)
     nasc = models.DateField(blank = False, null = False)
     historico = models.JSONField(blank = True, null = True)
-    endereço = models.JSONField(max_length = 200, blank = True, null = True)
+    endereco = models.JSONField(max_length = 200, blank = True, null = True)
     data_create = models.DateField(auto_now_add = True, auto_created = True)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nome','nasc']
     objects = UserManager()
 
+
+class Enderecos(models.Model):
+    user = models.ForeignKey(Users, on_delete = models.CASCADE)
+    cidade = models.CharField(max_length = 50, blank = False, null = False)
+    bairro = models.CharField(max_length = 50, blank = False, null = False)
+    cep = models.IntegerField(blank = False, null = False)
+    rua = models.CharField(max_length = 100, blank = False, null = False)
+    numero = models.IntegerField(blank = False, null = False)
+    

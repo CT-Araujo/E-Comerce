@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model, authenticate
-
+from .models import *
 Usermodel = get_user_model()
 
 class UsersSerialiazers(serializers.ModelSerializer):
@@ -20,3 +20,14 @@ class UsersSerialiazers(serializers.ModelSerializer):
 class UsersLoginSerializer(serializers.Serializer):
     email = serializers.CharField()
     password = serializers.CharField()
+    
+
+class EnderecoSerialzers(serializers.ModelSerializer):
+    class Meta:
+        model = Enderecos
+        fields = '__all__'
+
+
+class DadosSerializers(serializers.Serializer):
+    data_usuario = UsersSerialiazers()
+    endereco_data = EnderecoSerialzers()
