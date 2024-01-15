@@ -87,6 +87,13 @@ class UsersViews(APIView):
                     return Response(status=status.HTTP_400_BAD_REQUEST)
                 return Response(status=status.HTTP_401_UNAUTHORIZED)
             return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    def delete(self, request):
+        filtro = request.query_params.get('id', None)
+        user = Users.objects.get(id = filtro)
+        if user:
+            user.delete()
+            return Response(status = status.HTTP_200_OK)
         
 #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -97,7 +104,8 @@ class UserLoginViews(APIView):
             email = serializers.validated_data.get('email')
             password = serializers.validated_data.get('password')
             existe = Usermodel.objects.filter(email = email).exists()
-            
+            data_user = Users.objects.get(email = email)
+            id = data_user.id
         if existe:
             user = authenticate(username = email, password = password)
             if user:
@@ -105,7 +113,8 @@ class UserLoginViews(APIView):
                 if token:
                     login = {
                         "token": token,
-                        "email": email
+                        "email": email,
+                        "id": id
                     }  
                     return Response(login, status = status.HTTP_200_OK)              
             return Response({"message":"Erro na autenticação"}, status = status.HTTP_401_UNAUTHORIZED)
