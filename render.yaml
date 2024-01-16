@@ -1,4 +1,7 @@
-
+databases:
+  - name: ecomerce
+    databaseName: ecomercedb_r6ez
+    user: admin
 services:
   - type: web
     name: mysite
