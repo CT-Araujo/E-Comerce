@@ -106,19 +106,20 @@ class UserLoginViews(APIView):
             existe = Usermodel.objects.filter(email = email).exists()
             data_user = Users.objects.get(email = email)
             id = data_user.id
-        if existe:
-            user = authenticate(username = email, password = password)
-            if user:
-                token = obter_token_jwt(email, password)
-                if token:
-                    login = {
-                        "token": token,
-                        "email": email,
-                        "id": id
-                    }  
-                    return Response(login, status = status.HTTP_200_OK)              
-            return Response({"message":"Erro na autenticação"}, status = status.HTTP_401_UNAUTHORIZED)
-        return Response({"message":"O usuário informado não existe"}, status = status.HTTP_404_NOT_FOUND)
+            if existe:
+                user = authenticate(username = email, password = password)
+                if user:
+                    token = obter_token_jwt(email, password)
+                    if token:
+                        login = {
+                            "token": token,
+                            "email": email,
+                            "id": id
+                        }  
+                        return Response(login, status = status.HTTP_200_OK) 
+                    return Response({"message":"Erro na geração do token"}, status = status.HTTP_400_BAD_REQUEST )            
+                return Response({"message":"Erro na autenticação"}, status = status.HTTP_401_UNAUTHORIZED)
+            return Response({"message":"O usuário informado não existe"}, status = status.HTTP_404_NOT_FOUND)
     
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
