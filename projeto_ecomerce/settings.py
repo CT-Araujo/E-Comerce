@@ -81,10 +81,16 @@ WSGI_APPLICATION = 'projeto_ecomerce.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'ecomercedb_r6ez',
+        'USER': 'admin',
+        'PASSWORD': 'L6kD2excJaDHhyLeXsTC6cd0rFCwVG1q',
+        'HOST': 'dpg-cmit9bun7f5s73a6e3f0-a.oregon-postgres.render.com',
+        'PORT': '5432',
     }
 }
+
+
 SIMPLE_JWT = {
     'ACCESS_TOKEN_LIFETIME': timedelta(days=1),  
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),    
