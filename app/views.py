@@ -120,6 +120,7 @@ class UserLoginViews(APIView):
                     return Response({"message":"Erro na geração do token"}, status = status.HTTP_400_BAD_REQUEST )            
                 return Response({"message":"Erro na autenticação"}, status = status.HTTP_401_UNAUTHORIZED)
             return Response({"message":"O usuário informado não existe"}, status = status.HTTP_404_NOT_FOUND)
+        return Response({"message":"Erro na geração do token"}, status = status.HTTP_400_BAD_REQUEST )            
     
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
