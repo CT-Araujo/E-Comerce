@@ -98,29 +98,29 @@ class UsersViews(APIView):
 #/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 class UserLoginViews(APIView):
-    def post(self,request):
-        serializers = UsersLoginSerializer(data = request.data)
-        if serializers.is_valid():
-            email = serializers.validated_data.get('email')
-            password = serializers.validated_data.get('password')
-            existe = Usermodel.objects.filter(email = email).exists()
-            data_user = Users.objects.get(email = email)
-            id = data_user.id
-            if existe:
-                user = authenticate(username = email, password = password)
-                if user:
-                    token = obter_token_jwt(email, password)
-                    if token:
-                        login = {
-                            "token": token,
-                            "email": email,
-                            "id": id
-                        }  
-                        return Response(login, status = status.HTTP_200_OK) 
-                    return Response({"message":"Erro na geração do token"}, status = status.HTTP_400_BAD_REQUEST )            
-                return Response({"message":"Erro na autenticação"}, status = status.HTTP_401_UNAUTHORIZED)
-            return Response({"message":"O usuário informado não existe"}, status = status.HTTP_404_NOT_FOUND)
-        return Response(status = status.HTTP_400_BAD_REQUEST )            
+        def post(self,request):
+            email = request.data.get('email')
+            password = request.data.get('password')
+            existe = Users.objects.filter(email = email).exists()
+            
+            if email is None or password is None:
+                return Response({"message":"Por favor preencha corretamente todos os campos"}, status = status.HTTP_400_BAD_REQUEST)
+            else:
+                if existe:
+                    user = Users.objects.get(email = email)
+                    login = authenticate(email = email, password = password)
+                    if login:
+                        token = obter_token_jwt(email, password)
+                        if token:
+                            dados = {
+                                "token": token,
+                                "email": email,
+                                "id": user.id
+                            }
+                            return Response(dados, status = status.HTTP_200_OK)
+                        return Response({"message":"Erro na geração do token"}, status = status.HTTP_400_BAD_REQUEST)
+                    return Response({"message":"Erro na autenticação do usuário"}, status = status.HTTP_401_UNAUTHORIZED)
+                return Response({"message":"Usuário não encontrado no banco de dados"}, status = status.HTTP_404_NOT_FOUND)                 
     
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -170,5 +170,60 @@ class EnderecoViews(APIView):
         return super().get_permissions()
     
         
-            
+
+class ProdutosViews(APIView):
+    def get(self,request):
+        filtro_name = request.query_params.get('nome', None)
+        filtro_categoria = request.query_params.get('categoria', None)
         
+        if filtro_name:
+            dados = Produtos.objects.filter(nome = filtro_name)
+            serializers = ProdutosSerializers(dados, many = True )
+            return Response( serializers.data, status = status.HTTP_200_OK)
+        
+        if filtro_categoria:
+            dados = Produtos.objects.filter(categoria = filtro_categoria)
+            serializers = ProdutosSerializers(dados, many = True )
+            return Response( serializers.data, status = status.HTTP_200_OK)
+        
+        if filtro_categoria and filtro_name:
+            dados = Produtos.objects.filter(nome = filtro_name, categoria = filtro_categoria )
+            serializers = ProdutosSerializers(dados, many = True )
+            return Response( serializers.data, status = status.HTTP_200_OK)
+        
+        dados = Produtos.objects.all()
+        serializers = ProdutosSerializers(dados, many = True )
+        return Response( serializers.data, status = status.HTTP_200_OK)
+    
+    
+    def post(self, request):
+        serializers = ProdutosSerializers(data = request.data)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data, status = status.HTTP_201_CREATED)
+        return Response(serializers.errors, status = status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request):
+        if request.method == 'PATCH':
+            filtro = request.query_params.get('id', None)
+            existe = Produtos.objects.filter(id = filtro).exists()
+        
+            if existe:
+                produto = Produtos.objects.get(id = filtro)
+                serializer = ProdutosSerializers(produto, data= request.data, partial = True)
+                if serializer.is_valid():
+                    serializer.save()
+                    return Response(serializer.data, status= status.HTTP_200_OK)
+                return Response(status=status.HTTP_400_BAD_REQUEST)
+            return Response(status=status.HTTP_404_NOT_FOUND)
+    
+    
+    def get_permissions(self):
+        if self.request.method == 'GET':
+            return [AllowAny()]
+        elif self.request.method == 'POST':
+            return [IsAuthenticated()]
+        elif self.request.method == 'PATCH':
+            return [IsAuthenticated()]
+    
+    

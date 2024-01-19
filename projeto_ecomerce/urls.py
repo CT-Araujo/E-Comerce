@@ -8,5 +8,6 @@ urlpatterns = [
     path('token/',TokenObtainPairView.as_view(), name = 'token'),
     path('login/',views.UserLoginViews.as_view(), name = 'login'),
     path('endereco/',views.EnderecoViews.as_view(), name = 'endereco'),
+    path('produtos/',views.ProdutosViews.as_view(), name = 'produtos'),
     path('',views.UsersViews.as_view(),name='usuarios'),
 ]

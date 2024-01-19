@@ -44,3 +44,16 @@ class Enderecos(models.Model):
     rua = models.CharField(max_length = 100, blank = False, null = False)
     numero = models.IntegerField(blank = False, null = False)
     
+
+class Produtos(models.Model):
+    id = models.UUIDField(primary_key = True, default = uuid.uuid4, auto_created = True, unique = True,editable = False)
+    nome = models.CharField(max_length = 50, blank = False, null = False)
+    descricao = models.CharField(max_length = 50, blank = True, null = True)
+    categoria = models.CharField(max_length = 50, blank = False, null = False)
+    loja = models.CharField(max_length = 50, blank = False, null = False)
+    preco = models.FloatField(max_length = 5, blank = False, null = False)
+    imposto = models.FloatField(max_length = 5, blank = False, null = False)
+    localização = models.CharField(max_length = 50, blank = False, null = False)
+    
+    
+       
