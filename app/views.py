@@ -133,23 +133,31 @@ class EnderecoViews(APIView):
     def post(self, request):
         serializers = EnderecoSerialzers(data = request.data)
         if serializers.is_valid():
+            cep = serializers.validated_data['cep']
             
-            if Validation_cep(serializers.validated_data['cep']):
-                new_endereco = Enderecos.objects.create(
-                    id_user =  serializers.validated_data['id_user'],
-                    cidade = serializers.validated_data['cidade'],
-                    bairro = serializers.validated_data['bairro'],
-                    cep = serializers.validated_data['cep'],
-                    rua = serializers.validated_data['rua'],
-                    numero = serializers.validated_data['numero'],
-                )       
-                if Enderecos.objects.filter(id_user = serializers.validated_data["id_user"]).count() < 2:
+            validated = Validation_cep(cep)
+            
+            if validated.status_code == 200:
+                dados = eval(validated.data)
+                
+                if Enderecos.objects.filter(user = serializers._validated_data['user']).count() < 2:
+                    
+                    new_endereco = Enderecos.objects.create(
+                        user =  serializers.validated_data['user'],
+                        cidade = dados['localidade'],
+                        bairro = dados['bairro'],
+                        cep = cep,
+                        rua = dados['logradouro'],                    
+                    )
+                    
                     new_endereco.save()
-                    return Response(status = status.HTTP_200_OK)
-                return Response({"message":"Já existem dois endereços cadastrados nesse mesmo usuário"}, status = status.HTTP_400_BAD_REQUEST)
-            return Response({"message":"Erro na validação"},status = status.HTTP_400_BAD_REQUEST)
-        return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)
-        
+                    endreco_serialized = EnderecoSerialzers(new_endereco)
+                    return Response(endreco_serialized.data, status = status.HTTP_201_CREATED)
+                
+                return Response({"message":"Já existem dois endereços cadastrados neste usuário"}, status = status.HTTP_400_BAD_REQUEST)
+            return Response({"message": validated.data}, status = status.HTTP_400_BAD_REQUEST)
+        return Response(serializers.errors,status = status.HTTP_400_BAD_REQUEST)   
+
     def delete(self, request):
         get_id = request.query_params.get('id',None)
         try:

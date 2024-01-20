@@ -38,11 +38,11 @@ class Users(AbstractBaseUser,PermissionsMixin):
 
 class Enderecos(models.Model):
     user = models.ForeignKey(Users, on_delete = models.CASCADE)
-    cidade = models.CharField(max_length = 50, blank = False, null = False)
-    bairro = models.CharField(max_length = 50, blank = False, null = False)
+    cidade = models.CharField(max_length = 50, blank = False, null = True)
+    bairro = models.CharField(max_length = 50, blank = False, null = True)
     cep = models.IntegerField(blank = False, null = False)
-    rua = models.CharField(max_length = 100, blank = False, null = False)
-    numero = models.IntegerField(blank = False, null = False)
+    rua = models.CharField(max_length = 100, blank = False, null = True)
+    numero = models.IntegerField(blank = False, null = True)
     
 
 class Produtos(models.Model):

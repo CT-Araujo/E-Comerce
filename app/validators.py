@@ -26,11 +26,11 @@ def Validation_cep(cep):
         url = (f'https://viacep.com.br/ws/{cep}/json/')
         
         response = requests.get(url)
-        
-        if response.status_code == 200:
-            return Response(status = status.HTTP_200_OK)
+        dados = response.json()
+        if 'erro' in dados:
+            return Response({"message":"O CEP informado não corresponde a nenhuma localidade "}, status = status.HTTP_400_BAD_REQUEST)    
         else:
-            return Response({"message":"CEP invalido"}, status = status.HTTP_400_BAD_REQUEST)    
+            return Response(response.text, status = status.HTTP_200_OK)
     
     
 def obter_token_jwt(email, password):
