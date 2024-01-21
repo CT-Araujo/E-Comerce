@@ -18,7 +18,7 @@ class UserManager(BaseUserManager):
 
             
         email = self.normalize_email(email)
-        user = self.model(email = email, nome = nome,)
+        user = self.model(email = email, nome = nome)
         user.set_password(password)
         user.save()
         
@@ -30,9 +30,9 @@ class Users(AbstractBaseUser,PermissionsMixin):
     email = models.EmailField(max_length = 120, unique = True, blank = False)
     historico = models.JSONField(blank = True, null = True)
     data_create = models.DateField(auto_now_add = True, auto_created = True)
-    
+    nasc = models.DateField(blank = True, null = True)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nome','nasc']
+    REQUIRED_FIELDS = ['nome']
     objects = UserManager()
 
 
