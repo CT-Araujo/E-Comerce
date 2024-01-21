@@ -13,9 +13,9 @@ Usermodel = get_user_model()
 
 class UsersViews(APIView):
     def get(self, request):
-        filtro = request.query_params.get('email', None)
+        filtro = request.query_params.get('id', None)
         if filtro:
-            user = Users.objects.get(email=filtro)
+            user = Users.objects.get(id=filtro)
             enderecos = Enderecos.objects.filter(user=user.id)
 
             user_data = {
