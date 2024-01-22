@@ -63,7 +63,6 @@ class UsersViews(APIView):
                         login = {
                             "token": token,
                             "id": id,
-                            "email": email 
                         }
                         return Response(login, status = status.HTTP_201_CREATED)
                 return Response(status = status.HTTP_401_UNAUTHORIZED)  
@@ -114,7 +113,6 @@ class UserLoginViews(APIView):
                         if token:
                             dados = {
                                 "token": token,
-                                "email": email,
                                 "id": user.id
                             }
                             return Response(dados, status = status.HTTP_200_OK)
