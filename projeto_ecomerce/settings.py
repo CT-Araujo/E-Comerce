@@ -144,7 +144,11 @@ AUTH_PASSWORD_VALIDATORS = [
 
 AUTHENTICATION_BACKENDS = (
         'django.contrib.auth.backends.ModelBackend',
+        'allauth.account.auth_backends.AuthenticationBackend',
     )
+
+GOOGLE_OAUTH2_CLIENT_ID = 'sua-chave-do-cliente'
+GOOGLE_OAUTH2_CLIENT_SECRET = 'seu-segredo-do-cliente'
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 

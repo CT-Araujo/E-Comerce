@@ -7,7 +7,10 @@ from django.contrib.auth import get_user_model, authenticate
 from .serializers import *
 from .validators import *
 from .models import *
+from projeto_ecomerce.settings import *
 from django.core.exceptions import ObjectDoesNotExist
+from google.auth.transport import requests
+from google.oauth2 import id_token
 Usermodel = get_user_model()
 
 
@@ -69,6 +72,7 @@ class UsersViews(APIView):
             return(confirma_senha)  
         return Response(status = status.HTTP_400_BAD_REQUEST)
     
+    
     def patch(self, request, pk = None):
         if request.method == 'PATCH':
             filtro = request.query_params.get('email', None)
@@ -118,7 +122,25 @@ class UserLoginViews(APIView):
                             return Response(dados, status = status.HTTP_200_OK)
                         return Response({"message":"Erro na geração do token"}, status = status.HTTP_400_BAD_REQUEST)
                     return Response({"message":"Erro na autenticação do usuário"}, status = status.HTTP_401_UNAUTHORIZED)
-                return Response({"message":"Usuário não encontrado no banco de dados"}, status = status.HTTP_404_NOT_FOUND)                 
+                return Response({"message":"Usuário não encontrado no banco de dados"}, status = status.HTTP_404_NOT_FOUND)
+
+#////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+class GoogleLogin(APIView):
+    def post(self, request):
+        token = request.data.get('token')  # Supondo que o token seja enviado no corpo da solicitação.
+
+        if not token:
+            return Response({'error': 'Token não fornecido.'}, status=400)
+
+        try:
+            id_info = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_OAUTH2_CLIENT_ID)
+
+            
+
+            return Response({'message': 'Token válido.'})
+        except ValueError as e:
+            return Response({'error': f'Token inválido: {str(e)}'}, status=400)                 
     
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -211,9 +233,9 @@ class ProdutosViews(APIView):
             serializers = ProdutosSerializers(dados, many = True )
             return Response( serializers.data, status = status.HTTP_200_OK)
         
-        dados = Produtos.objects.all()
-        serializers = ProdutosSerializers(dados, many = True )
-        return Response( serializers.data, status = status.HTTP_200_OK)
+        produto = Produtos.objects.all()
+        serializers = ProdutosSerializers(produto, many = True ).data
+        return Response(serializers, status = status.HTTP_200_OK)
     
     
     def post(self, request):
@@ -242,8 +264,9 @@ class ProdutosViews(APIView):
         if self.request.method == 'GET':
             return [AllowAny()]
         elif self.request.method == 'POST':
-            return [IsAuthenticated()]
-        elif self.request.method == 'PATCH':
-            return [IsAuthenticated()]
+            return [IsAuthenticated()]  
+        elif self.request.method == 'PATCH':  
+            return [IsAuthenticated()] 
+        return super().get_permissions()
     
     
