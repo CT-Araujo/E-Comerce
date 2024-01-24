@@ -46,6 +46,10 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'app',
     'corsheaders',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'allauth.socialaccount.providers.google',
     
 ]
 
@@ -58,6 +62,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'allauth.account.middleware.AccountMiddleware', 
 ]
 
 ROOT_URLCONF = 'projeto_ecomerce.urls'
@@ -147,7 +152,7 @@ AUTHENTICATION_BACKENDS = (
         'allauth.account.auth_backends.AuthenticationBackend',
     )
 
-GOOGLE_OAUTH2_CLIENT_ID = '207555453379-hkra84da3246787prdna94ah6iec57vl.apps.googleusercontent.com'
+GOOGLE_OAUTH2_CLIENT_ID = '207555453379-r8n3tfd9arumf7locn111m0ge3eod0j6.apps.googleusercontent.com'
 GOOGLE_OAUTH2_CLIENT_SECRET = 'seu-segredo-do-cliente'
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

@@ -154,7 +154,8 @@ class GoogleUserViews(APIView):
                 return Response(status = status.HTTP_401_UNAUTHORIZED)  
 
             except ValueError as e:
-                return Response({'error': f'Token inválido: {str(e)}'}, status=400)          
+                return Response({'error': f'Token inválido: {str(e)}'}, status=400)
+        return Response(status = status.HTTP_400_BAD_REQUEST)     
     
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

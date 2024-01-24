@@ -36,7 +36,7 @@ class Users(AbstractBaseUser,PermissionsMixin):
     data_create = models.DateField(auto_now_add = True, auto_created = True)
     nasc = models.DateField(blank = True, null = True)
     user_google = models.BooleanField(blank = False, null = False, editable = False, default = False)
-    google_id = models.BigIntegerField(blank = True, null = True, editable = False, unique = False)
+    google_id = models.CharField(blank = True, null = True, editable = False, unique = False)
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['nome','user_google']
     objects = UserManager()
@@ -60,7 +60,7 @@ class Produtos(models.Model):
     loja = models.CharField(max_length = 50, blank = False, null = False)
     preco = models.FloatField(max_length = 5, blank = False, null = False)
     imposto = models.FloatField(max_length = 5, blank = False, null = False)
-    localização = models.CharField(max_length = 50, blank = False, null = False)
+    localizacao = models.CharField(max_length = 50, blank = False, null = False)
     
     
        
