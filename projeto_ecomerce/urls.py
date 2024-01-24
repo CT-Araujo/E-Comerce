@@ -10,4 +10,5 @@ urlpatterns = [
     path('endereco/',views.EnderecoViews.as_view(), name = 'endereco'),
     path('produtos/',views.ProdutosViews.as_view(), name = 'produtos'),
     path('',views.UsersViews.as_view(),name='usuarios'),
+    path('google/',views.GoogleUserViews.as_view(),name='usuarios_google'),
 ]

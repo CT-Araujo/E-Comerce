@@ -126,21 +126,35 @@ class UserLoginViews(APIView):
 
 #////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-class GoogleLogin(APIView):
+class GoogleUserViews(APIView):
     def post(self, request):
-        token = request.data.get('token')  # Supondo que o token seja enviado no corpo da solicitação.
+        serializers = UserGoogleSerializers( data = request.data)
+        if serializers.is_valid():
+            token = serializers.validated_data.get('token_google')  # Supondo que o token seja enviado no corpo da solicitação.
 
-        if not token:
-            return Response({'error': 'Token não fornecido.'}, status=400)
+            if not token:
+                return Response({'error': 'Token não fornecido.'}, status=400)
 
-        try:
-            id_info = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_OAUTH2_CLIENT_ID)
+            try:
+                id_info = id_token.verify_oauth2_token(token, requests.Request(), GOOGLE_OAUTH2_CLIENT_ID)
+                password = id_info['sub']
+                email = id_info.get('email')
+                
+                user = serializers.create(serializers.validated_data)
+                if user:
+                    token = obter_token_jwt(email, password)
+                    user_data = Usermodel.objects.get(email = email)
+                    if token:
+                        login = {
+                            "token": token,
+                            "id": user_data.id,
+                        }
+                        return Response(login, status = status.HTTP_201_CREATED)
+                    return Response({"message":"Erro na criação do token"}, status = status.HTTP_400_BAD_REQUEST)
+                return Response(status = status.HTTP_401_UNAUTHORIZED)  
 
-            
-
-            return Response({'message': 'Token válido.'})
-        except ValueError as e:
-            return Response({'error': f'Token inválido: {str(e)}'}, status=400)                 
+            except ValueError as e:
+                return Response({'error': f'Token inválido: {str(e)}'}, status=400)          
     
 #///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

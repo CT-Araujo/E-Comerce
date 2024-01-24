@@ -6,19 +6,23 @@ from rest_framework import status
 import uuid
 
 class UserManager(BaseUserManager):
-    def create_user(self, email,nome, password = None):
+    def create_user(self, email,nome, user_google,google_id, password = None):
         if not email:
             return Response({"message":"O email não foi informado"}, status = status.HTTP_400_BAD_REQUEST)
-        
-        if not password:
-            return Response({"message":"A senha não foi informado"}, status = status.HTTP_400_BAD_REQUEST)
+        if user_google == False:
+            if not password:
+                return Response({"message":"A senha não foi informada"}, status = status.HTTP_400_BAD_REQUEST)
+        else:
+            if not google_id:
+                return Response({"message":"O ID  não foi informado"}, status = status.HTTP_400_BAD_REQUEST)
+            password = google_id
         
         if not nome:
             return Response({"message":"O nome do Usuário não foi informado"}, status = status.HTTP_400_BAD_REQUEST)
 
             
         email = self.normalize_email(email)
-        user = self.model(email = email, nome = nome)
+        user = self.model(email = email, nome = nome, google_id = google_id, user_google = user_google)
         user.set_password(password)
         user.save()
         
@@ -31,9 +35,12 @@ class Users(AbstractBaseUser,PermissionsMixin):
     historico = models.JSONField(blank = True, null = True)
     data_create = models.DateField(auto_now_add = True, auto_created = True)
     nasc = models.DateField(blank = True, null = True)
+    user_google = models.BooleanField(blank = False, null = False, editable = False, default = False)
+    google_id = models.BigIntegerField(blank = True, null = True, editable = False, unique = False)
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['nome']
+    REQUIRED_FIELDS = ['nome','user_google']
     objects = UserManager()
+    
 
 
 class Enderecos(models.Model):

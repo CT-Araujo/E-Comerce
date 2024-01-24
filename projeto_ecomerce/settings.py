@@ -147,7 +147,7 @@ AUTHENTICATION_BACKENDS = (
         'allauth.account.auth_backends.AuthenticationBackend',
     )
 
-GOOGLE_OAUTH2_CLIENT_ID = 'sua-chave-do-cliente'
+GOOGLE_OAUTH2_CLIENT_ID = '207555453379-hkra84da3246787prdna94ah6iec57vl.apps.googleusercontent.com'
 GOOGLE_OAUTH2_CLIENT_SECRET = 'seu-segredo-do-cliente'
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
