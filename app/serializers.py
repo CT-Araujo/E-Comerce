@@ -11,7 +11,7 @@ class UsersSerialiazers(serializers.ModelSerializer):
     passwordconfirm = serializers.CharField(write_only =True)
     class Meta:
         model = Usermodel
-        fields = ['id','nome','email','password','passwordconfirm','user_google',]
+        fields = ['id','nome','email','password','passwordconfirm','user_google','google_id']
         extra_kwargs = {
             'password': {'write_only': True},
             }
@@ -22,11 +22,20 @@ class UsersSerialiazers(serializers.ModelSerializer):
         return data
     
     def create(self, validated_data):
-        if validated_data['user_google'] == False:
-            validated_data.pop('confirm_password', None)
-            user = Usermodel.objects.create_user(email = validated_data['email'], password = validated_data['password'],nome = validated_data['nome'], user_google = validated_data['user_google'])
-            user.save()
-            return user
+        validated_data.pop('passwordconfirm', None)
+        user_google = validated_data.get('user_google', False)
+        
+        google_id = validated_data.get('google_id', None)
+        
+        user = Usermodel.objects.create_user(
+            email = validated_data['email'], 
+            password = validated_data['password'],
+            nome = validated_data['nome'], 
+            user_google = user_google,
+            google_id = google_id
+            )
+        user.save()
+        return user
         
     
 class UsersLoginSerializer(serializers.Serializer):

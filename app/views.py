@@ -54,18 +54,19 @@ class UsersViews(APIView):
             
             email = serializers.validated_data.get('email')
             password = serializers.validated_data.get('password')
-            id = serializers.validated_data.get('id')
+            
             
             confirma_senha = Validation_password(password)
             
             if confirma_senha.status_code == 200:
                 user = serializers.create(serializers.validated_data)
                 if user:
+                    user_data = Usermodel.objects.get(email = email)
                     token = obter_token_jwt(email, password)
                     if token:
                         login = {
                             "token": token,
-                            "id": id,
+                            "id": user_data.id,
                         }
                         return Response(login, status = status.HTTP_201_CREATED)
                 return Response(status = status.HTTP_401_UNAUTHORIZED)  
